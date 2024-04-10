@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const express = require('express');
 const playerRoutes = require('./routes/players');
+const mongoose = require('mongoose');
 
 // Create express app
 const app = express();
@@ -16,7 +17,17 @@ app.use((req, res, next) => {
 })
 
 // Routes
-app.use('/api/players', playerRoutes);
+app.use('/api/players', playerRoutes)
 
-// Listen for requests
-app.listen (process.env.PORT, () => console.log('Server running on port', process.env.PORT));
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        // Listen for requests
+        app.listen (process.env.PORT, () => {
+            console.log('Server running on port', process.env.PORT)
+        });
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+
